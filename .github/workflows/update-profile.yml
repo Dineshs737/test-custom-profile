@@ -29,14 +29,30 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci || npm install
+
+      - name: Verify package.json
+        run: |
+          echo "🔍 Checking package.json scripts..."
+          cat package.json | grep -A 10 '"scripts"'
+
+      - name: Build TypeScript
+        run: |
+          echo "🔨 Building TypeScript..."
+          npm run build
+          echo "✅ Build complete"
+          ls -la dist/
 
       - name: Generate profile
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
         run: |
+          echo "🚀 Generating profile..."
           npm run generate
+          echo "✅ Profile generated"
 
       - name: Check for changes
         id: verify_diff

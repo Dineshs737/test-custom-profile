@@ -2,9 +2,9 @@ name: Update GitHub Profile
 
 on:
   schedule:
-    # Run every hour (good for active development)
-    - cron: "0 * * * *"
-  workflow_dispatch: # Allow manual trigger
+    # Run at minute 5 past every hour (more reliable)
+    - cron: "5 * * * *"
+  workflow_dispatch: # Manual trigger
   push:
     branches:
       - main
@@ -17,10 +17,16 @@ jobs:
       contents: write
 
     steps:
+      - name: Log execution time
+        run: |
+          echo "⏰ Workflow started at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "📊 Trigger: ${{ github.event_name }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -65,11 +71,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add profile.svg README.md
-          git commit -m "🤖 Auto-update profile stats [skip ci]"
+          git commit -m "🤖 Auto-update profile stats [$(date -u '+%H:%M UTC')]"
           git push
 
       - name: Success notification
-        if: steps.verify_diff.outputs.changed == 'true'
+        if: always()
         run: |
-          echo "✅ Profile updated successfully!"
-          echo "📊 New stats committed to repository"
+          echo "⏰ Workflow completed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          if [ "${{ steps.verify_diff.outputs.changed }}" == "true" ]; then
+            echo "✅ Profile updated successfully!"
+            echo "📊 New stats committed to repository"
+          else
+            echo "ℹ️  No changes detected - profile is up to date"
+          fi

@@ -1,13 +1,13 @@
 name: Update GitHub Profile
 
-on:
+#on:
   #schedule:
     # Run at minute 5 past every hour (more reliable)
   # - cron: "5 */3 * * *"
-  workflow_dispatch: # Manual trigger
-  push:
-    branches:
-      - main
+  #workflow_dispatch: # Manual trigger
+ # push:
+  #  branches:
+   #   - main
 
 jobs:
   update-profile:

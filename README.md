@@ -41,6 +41,10 @@
 - Node.js 18+ (for local testing)
 - Basic knowledge of Git
 
+### ⚠️ Important Note
+
+**The automatic schedule is DISABLED by default.** This allows you to test the setup first. You'll need to enable it manually (see Step 9.5 below).
+
 ### Step 1: Create Your Profile Repository
 
 1. Create a **new repository** with the same name as your GitHub username
@@ -141,6 +145,39 @@ git commit -m "🎉 Setup automated profile generator"
 git push origin main
 ```
 
+### Step 9.5: Enable Automatic Updates ⚠️
+
+**IMPORTANT:** The workflow schedule is commented out by default for initial testing.
+
+**Edit `.github/workflows/update-profile.yml`:**
+
+Find this section:
+```yaml
+on:
+  #schedule:
+    # Run at minute 5 past every hour (more reliable)
+  # - cron: "5 */3 * * *"
+  workflow_dispatch: # Manual trigger
+```
+
+**Uncomment the schedule lines:**
+```yaml
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: "5 */3 * * *"
+  workflow_dispatch: # Manual trigger
+```
+
+**Then push the change:**
+```bash
+git add .github/workflows/update-profile.yml
+git commit -m "⏰ Enable automatic updates"
+git push
+```
+
+💡 **This enables automatic updates every 3 hours!**
+
 ### Step 10: Trigger First Run
 
 1. Go to **Actions** tab in your repository
@@ -153,6 +190,26 @@ git push origin main
 ---
 
 ## 🎨 Customization Guide
+
+### Enable/Disable Automatic Updates
+
+By default, the workflow only runs manually. To enable automatic updates:
+
+**Edit `.github/workflows/update-profile.yml`:**
+```yaml
+on:
+  schedule:
+    - cron: "5 */3 * * *"  # Uncomment this line
+  workflow_dispatch:
+```
+
+To disable automatic updates (manual only):
+```yaml
+on:
+  #schedule:                # Comment out these lines
+  #  - cron: "5 */3 * * *"
+  workflow_dispatch:
+```
 
 ### Change Update Frequency
 
